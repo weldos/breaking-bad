@@ -4,6 +4,8 @@ import axios from 'axios'
 
 // Import Custom Components
 import Header from './components/ui/Header';
+import CharacterGrid from './components/characters/CharacterGrid';
+import Search from './components/ui/Search';
 
 
 
@@ -15,17 +17,23 @@ function App() {
   // this is a boolean variable called isLoading, the update function is setIsLoading.
   const [ isLoading, setIsLoading] = useState(true);
 
+  const [query, setQuery] = useState('');
+
   useEffect (() => {
     const fetchItems = async () => {
       const res = await axios(
-        `https://www.breakingbadapi.com/api/characters`
+        `https://www.breakingbadapi.com/api/characters?name=${query}`
       );
 
-      console.log(res.data)
-    }
-      fetchItems()
+    // add how many episodes a character was in  - .api/episodes diff endpoint
 
-    }, [])
+      console.log(res.data)
+      setItems(res.data);
+      setIsLoading(false);
+    }
+      fetchItems();
+
+    }, [query])
 
     //an empty array states that the useEffect will be called once after the components has mounted
 
@@ -33,6 +41,8 @@ function App() {
   return (
     <div className="container">
       <Header />
+      <Search getQuery={(q) => setQuery(q)}/>
+      <CharacterGrid isLoading={isLoading} items={items}/>
     </div>
   );
 }
